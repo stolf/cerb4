@@ -22,6 +22,14 @@
 		{if empty($visit)}
 			{$translate->_('header.not_signed_in')} <a href="{devblocks_url}c=login{/devblocks_url}">{$translate->_('header.signon')|lower}</a>
 		{else}
+			<form action="{devblocks_url}{/devblocks_url}" method="post">
+			<input type="hidden" name="c" value="contacts">
+			<input type="hidden" name="a" value="doAddressQuickSearch">
+			<input type="hidden" name="type" value="all"/>
+			<span><b>{$translate->_('common.quick_search')|capitalize}:</b></span>
+			<input type="text" size="24" name="query"/><button type="submit">go!</button>
+			</form>
+			<br>
 			{assign var=worker_name value=''|cat:'<b>'|cat:$active_worker->getName()|cat:'</b>'}
 			{'header.signed_in'|devblocks_translate:$worker_name}
 	
