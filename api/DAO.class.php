@@ -659,7 +659,7 @@ class DAO_Worker extends C4_ORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Worker::getFields();
 		
@@ -701,8 +701,9 @@ class DAO_Worker extends C4_ORMHelper {
 			$join_sql
 		);
 				
+		$op = $useor ? " OR " : " AND ";
 		$where_sql = "".
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "");
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "");
 			
 		$sort_sql = (!empty($sortBy)) ? sprintf("ORDER BY %s %s ",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : " ";
 			
@@ -1190,7 +1191,7 @@ class DAO_WorkerEvent extends DevblocksORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_WorkerEvent::getFields();
 		
@@ -1202,6 +1203,7 @@ class DAO_WorkerEvent extends DevblocksORMHelper {
 		$start = ($page * $limit); // [JAS]: 1-based [TODO] clean up + document
 		$total = -1;
 		
+		$op = $useor ? " OR " : " AND ";
 		$sql = sprintf("SELECT ".
 			"we.id as %s, ".
 			"we.created_date as %s, ".
@@ -1224,7 +1226,7 @@ class DAO_WorkerEvent extends DevblocksORMHelper {
 			// [JAS]: Dynamic table joins
 //			(isset($tables['ra']) ? "INNER JOIN requester r ON (r.ticket_id=t.id)" : " ").
 			
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "").
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "").
 			(!empty($sortBy) ? sprintf("ORDER BY %s %s",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : "")
 		;
 		// [TODO] Could push the select logic down a level too
@@ -1484,7 +1486,7 @@ class DAO_ContactOrg extends C4_ORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_ContactOrg::getFields();
 		
@@ -1531,8 +1533,9 @@ class DAO_ContactOrg extends C4_ORMHelper {
 			$join_sql
 		);
 		
+		$op = $useor ? " OR " : " AND ";
 		$where_sql = "".
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "");
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "");
 			
 		$sort_sql = (!empty($sortBy)) ? sprintf("ORDER BY %s %s ",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : " ";
 			
@@ -1882,7 +1885,7 @@ class DAO_Address extends C4_ORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Address::getFields();
 		
@@ -1935,8 +1938,9 @@ class DAO_Address extends C4_ORMHelper {
 			$join_sql
 		);
 		
+		$op = $useor ? " OR " : " AND ";
 		$where_sql = "".
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "");
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "");
 		
 		$sort_sql =	(!empty($sortBy) ? sprintf("ORDER BY %s %s ",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : " ");
 		
@@ -2248,7 +2252,7 @@ class DAO_Message extends DevblocksORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Message::getFields();
 		
@@ -2259,6 +2263,7 @@ class DAO_Message extends DevblocksORMHelper {
         list($tables,$wheres,$selects) = parent::_parseSearchParams($params, array(),$fields,$sortBy);
 		$start = ($page * $limit); // [JAS]: 1-based [TODO] clean up + document
 		
+		$op = $useor ? " OR " : " AND ";
 		$sql = sprintf("SELECT ".
 			"m.id as %s, ".
 			"m.ticket_id as %s ".
@@ -2272,7 +2277,7 @@ class DAO_Message extends DevblocksORMHelper {
 			(isset($tables['mh']) ? "INNER JOIN message_header mh ON (mh.message_id=m.id)" : " ").
 			(isset($tables['mc']) ? "INNER JOIN message_content mc ON (mc.message_id=m.id)" : " ").
 			
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "").
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "").
 			(!empty($sortBy) ? sprintf("ORDER BY %s %s",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : "")
 		;
 		$rs = $db->SelectLimit($sql,$limit,$start) or die(__CLASS__ . '('.__LINE__.')'. ':' . $db->ErrorMsg()); /* @var $rs ADORecordSet */
@@ -2733,7 +2738,7 @@ class DAO_Attachment extends DevblocksORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Attachment::getFields();
 		
@@ -2745,6 +2750,7 @@ class DAO_Attachment extends DevblocksORMHelper {
 		$start = ($page * $limit); // [JAS]: 1-based [TODO] clean up + document
 		$total = -1;
 		
+		$op = $useor ? " OR " : " AND ";
 		$sql = sprintf("SELECT ".
 			"a.id as %s, ".
 			"a.message_id as %s, ".
@@ -2789,7 +2795,7 @@ class DAO_Attachment extends DevblocksORMHelper {
 			// [JAS]: Dynamic table joins
 //			(isset($tables['ra']) ? "INNER JOIN requester r ON (r.ticket_id=t.id)" : " ").
 			
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "").
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "").
 			(!empty($sortBy) ? sprintf("ORDER BY %s %s",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : "")
 		;
 		// [TODO] Could push the select logic down a level too
@@ -3684,7 +3690,7 @@ class DAO_Ticket extends C4_ORMHelper {
 		return $pos;
 	}
     
-    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Ticket::getFields();
 		
@@ -3779,9 +3785,10 @@ class DAO_Ticket extends C4_ORMHelper {
 			$join_sql
 		);
 		
+		$op = $useor ? " OR " : " AND ";
 		$where_sql = "".
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "");
-			
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "");
+
 		$sort_sql = (!empty($sortBy) ? sprintf("ORDER BY %s %s ",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : " ");
 
 		$sql = 
@@ -5057,7 +5064,7 @@ class DAO_Community extends DevblocksORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Community::getFields();
 
@@ -5068,6 +5075,7 @@ class DAO_Community extends DevblocksORMHelper {
         list($tables,$wheres) = parent::_parseSearchParams($params, array(), $fields,$sortBy);
 		$start = ($page * $limit); // [JAS]: 1-based [TODO] clean up + document
 		
+		$op = $useor ? " OR " : " AND ";
 		$sql = sprintf("SELECT ".
 			"t.id as %s, ".
 			"t.title as %s ".
@@ -5080,7 +5088,7 @@ class DAO_Community extends DevblocksORMHelper {
 			// [JAS]: Dynamic table joins
 //			(isset($tables['ra']) ? "INNER JOIN requester r ON (r.ticket_id=t.id)" : " ").
 			
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "").
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "").
 			(!empty($sortBy) ? sprintf("ORDER BY %s %s",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : "")
 		;
 		$rs = $db->SelectLimit($sql,$limit,$start) or die(__CLASS__ . '('.__LINE__.')'. ':' . $db->ErrorMsg()); /* @var $rs ADORecordSet */
@@ -5406,7 +5414,7 @@ class DAO_Note extends DevblocksORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Note::getFields();
 		
@@ -5440,8 +5448,9 @@ class DAO_Note extends DevblocksORMHelper {
 //			(isset($tables['o']) ? "LEFT JOIN contact_org o ON (o.id=a.contact_org_id)" : " ").
 //			(isset($tables['mc']) ? "INNER JOIN message_content mc ON (mc.message_id=m.id)" : " ").
 
+		$op = $useor ? " OR " : " AND ";
 		$where_sql = "".
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "");
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "");
 			
 		$sql = $select_sql . $join_sql . $where_sql .  
 			(!empty($sortBy) ? sprintf("ORDER BY %s %s",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : "");
@@ -5817,7 +5826,7 @@ class DAO_GroupInboxFilter extends DevblocksORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_GroupInboxFilter::getFields();
 		
@@ -5828,6 +5837,7 @@ class DAO_GroupInboxFilter extends DevblocksORMHelper {
         list($tables,$wheres) = parent::_parseSearchParams($params, array(), $fields,$sortBy);
 		$start = ($page * $limit); // [JAS]: 1-based [TODO] clean up + document
 		
+		$op = $useor ? " OR " : " AND ";
 		$sql = sprintf("SELECT ".
 			"trr.id as %s, ".
 			"trr.group_id as %s, ".
@@ -5848,7 +5858,7 @@ class DAO_GroupInboxFilter extends DevblocksORMHelper {
 			// [JAS]: Dynamic table joins
 //			(isset($tables['ra']) ? "INNER JOIN requester r ON (r.ticket_id=t.id)" : " ").
 			
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "").
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "").
 			(!empty($sortBy) ? sprintf("ORDER BY %s %s",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : "")
 		;
 		$rs = $db->SelectLimit($sql,$limit,$start) or die(__CLASS__ . '('.__LINE__.')'. ':' . $db->ErrorMsg()); /* @var $rs ADORecordSet */
@@ -6974,7 +6984,7 @@ class DAO_Task extends C4_ORMHelper {
      * @param boolean $withCounts
      * @return array
      */
-    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true) {
+    static function search($columns, $params, $limit=10, $page=0, $sortBy=null, $sortAsc=null, $withCounts=true, $useor=false) {
 		$db = DevblocksPlatform::getDatabaseService();
 		$fields = SearchFields_Task::getFields();
 		
@@ -7024,8 +7034,9 @@ class DAO_Task extends C4_ORMHelper {
 			$join_sql
 		);
 		
+		$op = $useor ? " OR " : " AND ";
 		$where_sql = "".
-			(!empty($wheres) ? sprintf("WHERE %s ",implode(' AND ',$wheres)) : "");
+			(!empty($wheres) ? sprintf("WHERE %s ",implode($op,$wheres)) : "");
 			
 		$sort_sql =	(!empty($sortBy) ? sprintf("ORDER BY %s %s ",$sortBy,($sortAsc || is_null($sortAsc))?"ASC":"DESC") : " ");
 		

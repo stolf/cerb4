@@ -1154,12 +1154,30 @@ class ChContactsPage extends CerberusPageExtension {
         switch($type) {
             case "email":
                 $params[SearchFields_Address::EMAIL] = new DevblocksSearchCriteria(SearchFields_Address::EMAIL,DevblocksSearchCriteria::OPER_LIKE,strtolower($query));               
+				$view->useor = 0;
                 break;
             case "org":
                 $params[SearchFields_Address::ORG_NAME] = new DevblocksSearchCriteria(SearchFields_Address::ORG_NAME,DevblocksSearchCriteria::OPER_LIKE,strtolower($query));               
+				$view->useor = 0;
+                break;
+            case "all":
+				$fields = SearchFields_Address::getFields();
+
+				// Remove fields we don't want
+				unset($fields[SearchFields_Address::ID]);
+				unset($fields[SearchFields_Address::NUM_SPAM]);
+				unset($fields[SearchFields_Address::NUM_NONSPAM]);
+				unset($fields[SearchFields_Address::IS_BANNED]);
+				unset($fields[SearchFields_Address::IS_REGISTERED]);
+				unset($fields[SearchFields_Address::CONTACT_ORG_ID]);
+				unset($fields[SearchFields_Address::PASS]);
+
+				foreach($fields as $p){
+					$params[$p->token] = new DevblocksSearchCriteria($p->token,DevblocksSearchCriteria::OPER_LIKE,strtolower($query));
+				}
+				$view->useor = 1;
                 break;
         }
-        
         $view->params = $params;
         $view->renderPage = 0;
         $view->renderSortBy = null;

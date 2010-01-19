@@ -813,6 +813,7 @@ abstract class C4_AbstractView {
 	public $name = "";
 	public $view_columns = array();
 	public $params = array();
+	public $useor = 0;
 
 	public $renderPage = 0;
 	public $renderLimit = 10;
@@ -1145,6 +1146,7 @@ class C4_AbstractViewModel {
 	public $name = "";
 	public $view_columns = array();
 	public $params = array();
+	public $useor = 0;
 
 	public $renderPage = 0;
 	public $renderLimit = 10;
@@ -1256,6 +1258,7 @@ class C4_AbstractViewLoader {
 		$model->name = $view->name;
 		$model->view_columns = $view->view_columns;
 		$model->params = $view->params;
+		$model->useor = $view->useor;
 
 		$model->renderPage = $view->renderPage;
 		$model->renderLimit = $view->renderLimit;
@@ -1278,6 +1281,7 @@ class C4_AbstractViewLoader {
 		$inst->name = $model->name;
 		$inst->view_columns = $model->view_columns;
 		$inst->params = $model->params;
+		$inst->useor = $model->useor;
 
 		$inst->renderPage = $model->renderPage;
 		$inst->renderLimit = $model->renderLimit;
@@ -1346,7 +1350,9 @@ class C4_TicketView extends C4_AbstractView {
 			$this->renderLimit,
 			$this->renderPage,
 			$this->renderSortBy,
-			$this->renderSortAsc
+			$this->renderSortAsc,
+			true,
+			$this->useor
 		);
 		return $objects;
 	}
@@ -1882,7 +1888,9 @@ class C4_AddressView extends C4_AbstractView {
 			$this->renderLimit,
 			$this->renderPage,
 			$this->renderSortBy,
-			$this->renderSortAsc
+			$this->renderSortAsc,
+			true,
+			$this->useor
 		);
 		return $objects;
 	}
@@ -2108,7 +2116,9 @@ class C4_AttachmentView extends C4_AbstractView {
 			$this->renderLimit,
 			$this->renderPage,
 			$this->renderSortBy,
-			$this->renderSortAsc
+			$this->renderSortAsc,
+			true,
+			$this->useor
 		);
 		return $objects;
 	}
@@ -2322,7 +2332,9 @@ class C4_ContactOrgView extends C4_AbstractView {
 			$this->renderLimit,
 			$this->renderPage,
 			$this->renderSortBy,
-			$this->renderSortAsc
+			$this->renderSortAsc,
+			true,
+			$this->useor
 		);
 		return $objects;
 	}
@@ -2532,7 +2544,9 @@ class C4_TaskView extends C4_AbstractView {
 			$this->renderLimit,
 			$this->renderPage,
 			$this->renderSortBy,
-			$this->renderSortAsc
+			$this->renderSortAsc,
+			true,
+			$this->useor
 		);
 		return $objects;
 	}
@@ -2844,7 +2858,9 @@ class C4_WorkerView extends C4_AbstractView {
 			$this->renderLimit,
 			$this->renderPage,
 			$this->renderSortBy,
-			$this->renderSortAsc
+			$this->renderSortAsc,
+			true,
+			$this->useor
 		);
 	}
 
@@ -3069,7 +3085,9 @@ class C4_WorkerEventView extends C4_AbstractView {
 			$this->renderLimit,
 			$this->renderPage,
 			$this->renderSortBy,
-			$this->renderSortAsc
+			$this->renderSortAsc,
+			true,
+			$this->useor
 		);
 		return $objects;
 	}

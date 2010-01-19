@@ -10,6 +10,7 @@
 		<td nowrap="nowrap">
 			<h2 style="display:inline;">{$translate->_('common.filters')|capitalize}</h2>
 			[ <a href="javascript:;" onclick="document.{$view->id}_criteriaForm.a.value='viewResetCriteria';document.{$view->id}_criteriaForm.submit();toggleDiv('criteriaDiv');">{$translate->_('common.reset')|lower}</a> ]
+			[ {if $view->useor == 1}using OR{else}using AND{/if} ]
 		</td>
 	</tr>
 	<tr>
