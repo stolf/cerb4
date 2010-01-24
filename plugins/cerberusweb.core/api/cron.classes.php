@@ -916,13 +916,6 @@ class ImportCron extends CerberusCronPageExtension {
 		$sPassword = (string) $xml->password;
 		$sOrganization = (string) $xml->organization;
 		
-		// Dupe check org
-		if(null != ($address = DAO_Address::lookupAddress($sEmail))) {
-			$logger->info('[Importer] Avoiding creating duplicate contact #'.$address->id.' ('.$sEmail.')');
-			// [TODO] Still associate with org if local blank?
-			// [TODO] Still associate password if local blank?
-			return true;
-		}
 		
 		$fields = array(
 			DAO_Address::FIRST_NAME => $sFirstName,
@@ -936,7 +929,14 @@ class ImportCron extends CerberusCronPageExtension {
 			$fields[DAO_Address::PASS] = $sPassword;
 		}
 		
-		$address_id = DAO_Address::create($fields);
+		// Dupe check org
+		if(null != ($address = DAO_Address::lookupAddress($sEmail))) {
+			//$logger->info('[Importer] Avoiding creating duplicate contact #'.$address->id.' ('.$sEmail.')');
+			DAO_Address::update($address->id, $fields);
+			$address_id = $address->id;
+		}else{
+			$address_id = DAO_Address::create($fields);
+		}
 		
 		// Associate with organization
 		if(!empty($sOrganization)) {
@@ -946,7 +946,14 @@ class ImportCron extends CerberusCronPageExtension {
 				));
 			}
 		}
-		
+
+		// Import Custom Fields
+		$custom_fields = DAO_CustomField::getBySource(ChCustomFieldSource_Address::ID);
+		foreach($custom_fields as $field){
+			$name = str_replace(' ','_',strtolower($field->name));
+			$x = (string) $xml->$name;
+			DAO_CustomFieldValue::setFieldValue(ChCustomFieldSource_Address::ID, $address_id, $field->id,$x);
+		}
 		$logger->info('[Importer] Imported contact #'.$address_id.' ('.$sEmail.')');
 		
 		return true;
