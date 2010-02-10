@@ -406,6 +406,7 @@ class ChTaskSource_Ticket extends Extension_TaskSource {
 		return array(
 			'name' => '[Ticket] '.$ticket->subject,
 			'url' => $url->write(sprintf('c=display&mask=%s&tab=tasks',$ticket->mask), true),
+			'team_id' => $ticket->team_id,
 		);
 	}
 };

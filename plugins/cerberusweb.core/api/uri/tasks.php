@@ -118,6 +118,20 @@ class ChTasksPage extends CerberusPageExtension {
 				if(null == ($task = DAO_Task::get($task_id))) {
 					break; // [TODO] Not found
 				}
+
+				// Check group membership ACL
+				$active_worker = CerberusApplication::getActiveWorker();
+				$active_worker_memberships = $active_worker->getMemberships();
+
+				if(null != ($mft = DevblocksPlatform::getExtension($task->source_extension))) {
+					$source_renderer = $mft->createInstance();
+					$source_info = $source_renderer->getSourceInfo($task->source_id);
+				}
+				if(isset($source_info['team_id']) && !isset($active_worker_memberships[$source_info['team_id']]) && ($task->worker_id != $active_worker->id)) {
+					echo "<H1>".$translate->_('common.access_denied')."</H1>";
+					return;
+				}
+
 				$tpl->assign('task', $task);			
 
 				if(null == (@$tab_selected = $stack[0])) {

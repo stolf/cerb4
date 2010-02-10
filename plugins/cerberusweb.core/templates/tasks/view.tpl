@@ -52,6 +52,25 @@
 	{else}
 		{assign var=tableRowBg value="tableRowAltBg"}
 	{/if}
+	{assign var=source_extension value=$result.t_source_extension}
+	{assign var=source_id value=$result.t_source_id}
+	{assign var=source_renderer value=$source_renderers.$source_extension}
+	{if !empty($source_id) && !empty($source_renderer)}
+		{assign var=source_info value=$source_renderer->getSourceInfo($source_id)}
+		{assign var=team_id value=$source_info.team_id}
+	{else}
+		{assign var=team_id value=0}
+	{/if}
+	{if $team_id != 0 && !isset($active_worker_memberships.$team_id) && ($result.t_worker_id != $active_worker->id)}{*censor*}
+		<tr class="{$tableRowBg}">
+			<td>&nbsp;</td>
+			<td rowspan="2" colspan="{math equation="x" x=$smarty.foreach.headers.total}" style="color:rgb(140,140,140);font-size:10px;text-align:left;vertical-align:middle;">[Access Denied: {$teams.$ticket_group_id->name} #{$result.t_mask}]</td>
+		</tr>
+		<tr class="{$tableRowBg}">
+			<td>&nbsp;</td>
+		</tr>
+	
+	{else}
 	
 		<tr class="{$tableRowBg}" id="{$rowIdPrefix}_s" onmouseover="toggleClass(this.id,'tableRowHover');toggleClass('{$rowIdPrefix}','tableRowHover');" onmouseout="toggleClass(this.id,'{$tableRowBg}');toggleClass('{$rowIdPrefix}','{$tableRowBg}');" onclick="if(getEventTarget(event)=='TD') checkAll('{$rowIdPrefix}_s');">
 			<td align="center" rowspan="2"><input type="checkbox" name="row_id[]" value="{$result.t_id}"></td>
@@ -101,11 +120,7 @@
 				</td>
 			{elseif $column=="t_source_extension"}
 				<td>
-					{assign var=source_extension value=$result.t_source_extension}
-					{assign var=source_id value=$result.t_source_id}
-					{assign var=source_renderer value=$source_renderers.$source_extension}
 					{if !empty($source_id) && !empty($source_renderer)}
-						{assign var=source_info value=$source_renderer->getSourceInfo($source_id)}
 						<a href="{$source_info.url}" title="{$source_info.name|escape}">{$source_info.name|truncate:75:'...':true|escape}</a>
 					{/if}
 				</td>
@@ -114,6 +129,7 @@
 			{/if}
 		{/foreach}
 		</tr>
+	{/if}
 	{/foreach}
 	
 </table>
